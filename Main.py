@@ -203,17 +203,27 @@ def itemSearch():
             item3=curUser.fetchone()
 
             userItems=[item1,item2,item3]
+            #----------------------------------------------------------------------------------
             itemIDList=["Item1ID","Item2ID","Item3ID"]
-            for i in range(len(userItems)):
-                if userItems[i]=="0":
-                    query="""UPDATE [%s] SET (?)='0'"""%activeUser,(itemIDList[0])#replace 0 with book in table
-                    curUser.execute(query)
-                else:
-                    itemIDList.pop()
-            
+            curUser.execute("SELECT MainLib FROM [%s]"%activeUser)
+            userLib=curUser.fetchone()
+
+            conLib=sqlite3.connect('./Database/Library.db')
+            curLib=conLib.cursor()
+            libSearch="""Select UserID FROM [%s] LIMIT 1 OFFSET ?"""#will loop through table
+            for x in range(2):
+                curLib.execute(libSearch%userLib,(x+1))
+                userCheck=conLib.fetchone()#holds first book with no owner
+                if userCheck==0:
+                    print()
+                    #curLib.execute("""UPDATE """)
+
+            conLib.commit()
+            conLib.close()
+            #---------------------------------------------------------------------------
             conUser.commit()
             conUser.close()
-            
+
         elif "currBooks" in request.form:
             return redirect('/home')
 
