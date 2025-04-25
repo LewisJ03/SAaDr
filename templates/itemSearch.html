@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+    <link rel="stylesheet" href="./static/loginStyles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Home</h1>
+        <form method="POST">
+            <label for="Search">Search:</label>
+            <input type="text" id="Search" name="Search"><br><br>
+            <button type="submit" name="searchItem" value="Submit">Submit</button>
+            <button type="submit" name="currBooks" value="Book">Books</button>
+            <button type="submit" name="logout" value="logout">Logout</button>
+        </form>
+        <table class="table">
+            <tr class="header">
+                {% for header in headings  %}
+                <th class="cell">{{ header }}</th>
+                {% endfor %}
+            </tr>
+        
+            {% for row in data %}
+            <tr class="row">
+                {% for cell in row %}
+                    <td class="cell">{{cell}}</td>
+                {% endfor %}
+                <td>
+                    <button>Take Out</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
