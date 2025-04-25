@@ -22,7 +22,9 @@
                     <td class="cell">{{cell}}</td>
                 {% endfor %}
                 <td>
-                    <button type="submit" name="return" value="return">Return</button>
+                    <form method="POST">
+                        <button type="submit" name="return" value="return">Return</button>
+                    </form>
                 </td>
             </tr>
             {% endfor %}

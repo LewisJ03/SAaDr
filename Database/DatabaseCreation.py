@@ -74,10 +74,10 @@ for x in range(len(libList)):
         numOfItems=numOfItems/7
 
     randomItem=rand.randint(1,1000)
-    tempRandUser=rand.randint(1,2106)
+    randomItem2=rand.randint(1,1000)
 
-    cursor.execute("INSERT INTO [%s] (LibID,ItemID,UserID) VALUES (?,?,?)"%libID,(libID,randomItem,tempRandUser))
-    cursor.execute("INSERT INTO [%s] (LibID,ItemID,UserID) VALUES (?,?,?)"%libID,(libID,randomItem,0))#test data for unclaimed item
+    cursor.execute("INSERT INTO [%s] (LibID,ItemID,UserID) VALUES (?,?,?)"%libID,(libID,randomItem,0))
+    cursor.execute("INSERT INTO [%s] (LibID,ItemID,UserID) VALUES (?,?,?)"%libID,(libID,randomItem2,0))#test data for unclaimed item
     cursor.execute("INSERT INTO LIB_ID(LibID,LibName,Location,OpenTime,CloseTime,NumOfItems) VALUES (?,?,?,?,?,?)",(libList[x],libName,location,openTime,closeTime,numOfItems))
     connection.commit()
 
@@ -125,9 +125,9 @@ for j in range(len(userList)):
     address="10 Downing Street"
     postCode="SW1A2AA"
     mainLib=3
-    item1=rand.randint(1,1000)
-    item2=rand.randint(1,1000)
-    item3=rand.randint(1,1000)
+    item1=0
+    item2=0
+    item3=0
 
     cursor.execute("""INSERT INTO [%s] (UserID,Privilege,Forename,Surname,Email,PhoneNumber,Password,Age,Address,Postcode,MainLib,Item1ID,Item2ID,Item3ID)
                     values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""%userID,(userID,privilege,forename,surname,email,phoneNumber,password,age,address,postCode,mainLib,item1,item2,item3))
@@ -136,4 +136,15 @@ for j in range(len(userList)):
 print("user added")
 
 
+connection=sqlite3.connect('User.db')
+cursor=connection.cursor()
+cursor.execute("""UPDATE '28' SET Item1ID='966'""")
+connection.commit()
 connection.close()
+
+connection=sqlite3.connect('Library.db')
+cursor=connection.cursor()
+cursor.execute("""INSERT INTO '3' (LibID,ItemID,UserID) values(?,?,?)""",(3,966,28))
+connection.commit()
+connection.close()
+

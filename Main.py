@@ -7,11 +7,6 @@ app=Flask(__name__)
 activeUser=0
 
 @app.route('/')
-#def index():
-    #return render_template('login.html')
-
-#activeUser=0
-
 def loginCheck():#For checking that a user is viewing with an account
     activeUserCheck=activeUser
     if activeUserCheck==0:
@@ -197,7 +192,7 @@ def itemSearch():
                     data.append(tempResult)
                 return render_template('itemSearch.html',headings=headings,data=data)
             
-        elif "takeOut" in request.form:#for aquiring items
+        elif "take" in request.form:#for aquiring items
             conUser=sqlite3.connect('./Database/User.db')
             curUser=conUser.cursor()
             curUser.execute("""SELECT Item1ID FROM [%s];"""%activeUser)
@@ -206,8 +201,6 @@ def itemSearch():
             item2=curUser.fetchone()
             curUser.execute("""SELECT Item3ID FROM [%s];"""%activeUser)
             item3=curUser.fetchone()
-            
-            return data[0]
 
             userItems=[item1,item2,item3]
             itemIDList=["Item1ID","Item2ID","Item3ID"]
@@ -220,8 +213,7 @@ def itemSearch():
             
             conUser.commit()
             conUser.close()
-            return render_template('/itemSearch')
-
+            
         elif "currBooks" in request.form:
             return redirect('/home')
 
@@ -263,29 +255,32 @@ def items():
         if "searchItem" in request.form:
             return redirect('/itemSearch')#switches back to main page
     
-    elif "return" in request.form:#for returing items
-            conUser=sqlite3.connect('./Database/User.db')
-            curUser=conUser.cursor()
-            curUser.execute("""SELECT Item1ID FROM [%s];"""%activeUser)
-            item1=curUser.fetchone()
-            curUser.execute("""SELECT Item2ID FROM [%s];"""%activeUser)
-            item2=curUser.fetchone()
-            curUser.execute("""SELECT Item3ID FROM [%s];"""%activeUser)
-            item3=curUser.fetchone()
-            
-            userLib=curUser.execute("SELECT MainLib FROM [%s];")
-            conItem=sqlite3.connect('./Database/items.db')
-            curItem=conItem.cursor()
-            curItem.execute("""UPDATE ? SET UserID='0' WHERE ItemID=?"""),(userLib,item1)
-            curItem.commit()
-            curItem.close()
-            
-            curUser.execute("""UPDATE ? SET Item1ID=?"""),(activeUser,item2)
-            curUser.execute("""UPDATE ? SET Item2ID=?"""),(activeUser,item3)
-            curUser.execute("""UPDATE [%s] SET Item3ID='0'""")%activeUser
+        elif "return" in request.form:#for returing items
+                conUser=sqlite3.connect('./Database/User.db')
+                curUser=conUser.cursor()
+                curUser.execute("""SELECT Item1ID FROM [%s];"""%activeUser)
+                item1=curUser.fetchone()
+                curUser.execute("""SELECT Item2ID FROM [%s];"""%activeUser)
+                item2=curUser.fetchone()
+                curUser.execute("""SELECT Item3ID FROM [%s];"""%activeUser)
+                item3=curUser.fetchone()
+                
+                curUser.execute("SELECT MainLib FROM [%s]"%activeUser)
+                userLib=curUser.fetchone()
+                conLib=sqlite3.connect('./Database/Library.db')
+                curLib=conLib.cursor()
 
-            conUser.commit()
-            conUser.close()
+                curLib.execute("""UPDATE [%s] SET UserID=0 WHERE ItemID=?"""%userLib,(item1))
+                conLib.commit()
+                conLib.close()
+                
+                curUser.execute("""UPDATE [%s] SET Item1ID=?;"""%activeUser,(item2))
+                curUser.execute("""UPDATE [%s] SET Item2ID=?;"""%activeUser,(item3))
+                curUser.execute("""UPDATE [%s] SET Item3ID='0';"""%activeUser)
+
+
+                conUser.commit()
+                conUser.close()
     return render_template('home.html',headings=headings, data=results)
 
 @app.route('/logout',methods=["GET","POST"],)
